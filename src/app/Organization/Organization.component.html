@@ -1,0 +1,96 @@
+<div role="main" class="col-md-12 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <div class="pull-left">
+      <h1 class="h2">Organizations</h1>
+    </div>
+
+  </div>
+  <div class="table-responsive">
+<!-- 
+    <table class="table table-sm  ">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Company
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,0)" placeholder="Company..">
+
+          </th>
+          <th scope="col">Industry
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,1)" placeholder="Industry..">
+
+          </th>
+          <th scope="col">WebSite
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,2)" placeholder="Website..">
+
+          </th>
+          <th scope="col">Mobile Number
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,3)" placeholder="Mobile Number..">
+
+          </th>
+          <th scope="col">Email
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,4)" placeholder="Email..">
+
+          </th>
+          <th scope="col">Fax
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,5)" placeholder="Fax..">
+
+          </th>
+          <th scope="col">Address
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,6)" placeholder="Address..">
+
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let organization of  Organizations | paginate: config">
+          <th scope="row">{{organization.id}}</th>
+          <td>{{organization.name}}</td>
+          <td>{{organization.industry}}</td>
+          <td>{{organization.webSite}}</td>
+          <td>{{organization.contactNumber}}</td>
+          <td>{{organization.email}}</td>
+          <td>{{organization.fax}}</td>
+          <td>{{organization.address}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+ -->
+
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover">
+      <thead>
+        <tr>
+         <th>Id</th>
+          <th>Company</th>
+          <th>Industry</th>
+          <th>address</th>
+          <th>contactNumber</th>
+          <th>email</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let person of Datalist">
+          <td>{{ person.id }}</td>
+          <td>{{ person.name }}</td>
+          <td>{{ person.industry }}</td>
+          <td>{{ person.address }}</td>
+          <td>{{ person.contactNumber }}</td>
+          <td>{{ person.email }}</td>
+          <td>{{ person.webSite }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+          <tr>
+            <th><input type="text" placeholder="Search ID" name="search-id"/></th>
+            <th><input type="text" placeholder="Search Organization " name="search-name"/></th>
+            <th><input type="text" placeholder="Search industry" name="search-industry"/></th>
+            <th><input type="text" placeholder="Search address" name="search-address"/></th>
+            <th><input type="text" placeholder="Search contactNumber" name="search-contactNumber"/></th>
+            <th><input type="text" placeholder="Search email" name="search-email"/></th>
+            <th><input type="text" placeholder="Search webSite" name="search-website"/></th>
+          </tr>
+        </tfoot>
+      </table>    
+  </div>
+</div>

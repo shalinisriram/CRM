@@ -1,0 +1,104 @@
+<!-- <div role="main" class="col-md-12 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <div class="pull-left">
+      <h1 class="h2">Contacts</h1>
+    </div>
+
+  </div>
+  <div class="table-responsive">
+
+    <table class="table table-sm  ">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,0)" placeholder="Name..">
+
+          </th>
+          <th scope="col">Designation
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,1)" placeholder="Designation..">
+
+          </th>
+          <th scope="col">Mobile Number
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,2)" placeholder="Mobile Number..">
+
+          </th>
+          <th scope="col">Email
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,3)" placeholder="Email..">
+
+          </th>
+          <th scope="col">Fax
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,4)" placeholder="Fax..">
+
+          </th>
+          <th scope="col">Address
+            <input style="width: 100%;" type="text" (keyup)="FilterByName($event,5)" placeholder="Address..">
+
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contact of  Contacts | paginate: config">
+          <th scope="row">{{contact.lastName}}</th>
+          <td>{{contact.firstName }}</td>
+          <td>{{contact.title}}</td>
+          <td>{{contact.contactNumber}}</td>
+          <td>{{contact.email}}</td>
+          <td>{{contact.fax}}</td>
+          <td>{{contact.address}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+
+  </div>
+</div> -->
+
+
+
+  
+  <div role="main" class="col-md-12 ml-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+      <div class="pull-left">
+        <h1 class="h2">Contacts</h1>
+      </div>
+  
+    </div>
+    <div class="table-responsive">
+  
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover">
+        <thead>
+          <tr>
+           <th>Id</th>
+            <th>First name</th>
+            <th>Title</th>
+            <th>address</th>
+            <th>contactNumber</th>
+            <th>email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let person of Datalist">
+            <td>{{ person.lastName }}</td>
+            <td>{{ person.firstName }}</td>
+            <td>{{ person.title }}</td>
+            <td>{{ person.address }}</td>
+            <td>{{ person.contactNumber }}</td>
+            <td>{{ person.email }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+              <th><input type="text" placeholder="Search ID" name="search-title"/></th>
+              <th><input type="text" placeholder="Search first name" name="search-first-name"/></th>
+              <th><input type="text" placeholder="Search title " name="search-title-name"/></th>
+              <th><input type="text" placeholder="Search address" name="search-address"/></th>
+              <th><input type="text" placeholder="Search contactNumber" name="search-contactNumber"/></th>
+              <th><input type="text" placeholder="Search email" name="search-email"/></th>
+            </tr>
+          </tfoot>
+        </table>    
+  
+    </div>
+  </div>
+  

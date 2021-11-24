@@ -1,0 +1,60 @@
+rounded{ 
+    border-top: 8px solid #bbb;
+    border-radius: 5px; 
+}
+Axis_IB{
+    size: 5rem;
+    display: flex;
+}
+modal-dialog {
+    max-width: 90%;
+}
+
+form{
+    font-size: small;
+    size: 5rem;
+
+}
+
+
+ 
+ 
+@media (min-width: 1200px){
+    .modal-xl {
+        max-width: 90%;
+    }
+}
+
+@media (min-width: 992px){
+    .modal-lg, .modal-xl {
+        max-width: 90%;
+    }
+
+}
+@media (min-width: 576px){
+    .modal-dialog {
+        max-width: 90%;
+    }
+
+}
+ 
+body{
+    padding:20px 20px;
+  }
+  
+  .results tr[visible='false'],
+  .no-result{
+    display:none;
+  }
+  
+  .results tr[visible='true']{
+    display:table-row;
+  }
+  
+  .counter{
+    padding:8px; 
+    color:#ccc;
+  }
+
+td,th{
+    white-space: nowrap;}

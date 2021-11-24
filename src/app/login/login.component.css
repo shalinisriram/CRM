@@ -1,0 +1,82 @@
+html,body {
+    height: 100vh;
+    box-sizing: border-box;
+}
+ 
+body {
+    padding: 20px 0;
+    background-image: url("../../assets/bg_MainPage.jpg");
+    background-size: auto;
+}
+
+.form-signin {
+    width: 100%;
+    min-width: 340px;
+    max-width: 400px;
+    padding: 45px;
+    margin: auto;
+    background-color: #f8f9fa;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    box-shadow: 10px 10px 10px rgba(0,0,0,0.5);
+}
+
+    .form-signin .checkbox {
+        font-weight: 400;
+    }
+
+.form-control {
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+    .form-control:focus {
+        z-index: 200;
+    }
+
+.message-hide {
+    display: none !important;
+}
+
+.message-show {
+    display: block !important;
+}
+
+.bottom-left-float-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    text-align: left;
+}
+
+.validation-summary-errors ul {
+    margin-top: 20px;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.validation-summary-errors ul {
+    list-style: none;
+}
+
+#otpInput {
+    width: 150px;
+}
+
+#generateOtp {
+    width: 150px;
+    height: 44px;
+}
+
+@media screen and (max-width: 480px) {
+    #otpInput {
+        width: 120px;
+    }
+
+    #generateOtp {
+        width: auto;
+        height: 44px;
+    }
+ }

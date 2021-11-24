@@ -1,0 +1,812 @@
+<div role="main" class="col-md-12 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <div class="pull-left">
+      <h1 class="h2">Opportunities</h1>
+      <div class="d-flex justify-content-between">
+        <ejs-daterangepicker id='daterangepicker' placeholder='Select a range' [(ngModel)]='value'>
+        </ejs-daterangepicker>
+        <button type="button" class="btn btn-primary  pr-2 ml-3" (click)="dateUpdate();GetDataOnSelectedDates()">Update
+          <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+        </button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">New
+      Opportunity</button>
+  </div>
+  <div class="table-responsive">
+    
+         
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover" >
+      <thead>
+        <tr>
+         <th style="width:3%;">#</th>
+          <th>Organization</th>
+          <th>Geography</th>
+          <th>Industry</th>
+          <th>Offering</th>
+          <th>BussinessType</th>
+         <th>serviceLines</th>
+          <th>Forecast Value</th>
+          <th>Created On</th>
+          <th>Modified On</th>
+          <th>Status</th>
+          <th>Owner</th>
+          <th>Actions</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody style="height: auto;">
+        <tr *ngFor="let person of Datalist" style="height: auto;padding: 0%;margin: 0%;">
+          <td style="width: 3%;">{{ person.id }}</td>
+          <td>{{ person.value.organization }}</td>
+          <td>{{ person.value.geo | GeoPipe }}</td>
+          <td>{{ person.value.industry }}</td>
+          <td>{{ person.value.digitalAndInnovation | OfferingPipe }}</td>
+          <td>{{ person.value.businessType | BusinessPipe }}</td>
+          
+          <td>
+            <div *ngIf="person.value.digitalAndInnovation !=3 && person.value.businessType == 1">
+               {{person.value.dI_ServiceLines | DaTmProjects}}
+            </div>
+  
+            <div *ngIf="person.value.digitalAndInnovation != 3 && person.value.businessType == 2">
+               {{person.value.enggServiceLines | EnggTmProjects}}
+            </div>
+  
+            <div *ngIf="person.value.digitalAndInnovation == 3 && person.value.businessType == 1">
+              {{person.value.diProducts | DAProducts}}
+            </div>
+          </td>
+
+          
+          <td>{{person.value.forecastedValue }} {{ person.value.forecastedValueCurrency |CurrencyPipe }}</td>
+          <td>{{person.value.createdOn | date}}</td>
+          <td>{{person.value.modifiedOn | date}}</td>
+          <td>
+            <div *ngIf="person.value.currentState!=null">
+              {{person.value.currentState | OpportunityStatusPipe}}
+            </div>
+            <div *ngIf="person.value.currentState==null">Not Assigned</div></td>
+          <!-- <td>{{lead.value.owner.userName}}</td> -->
+          <td>
+            {{UserName}}
+           
+          </td>
+          <td>
+           
+            <button class="btn btn-link text-black" (click)="editOpportunity(person)" data-toggle="modal"
+              data-target="#exampleModal1">Edit</button>
+            <button *ngIf="person.salesType !=1" class="btn btn-link text-black"
+              (click)="deleteOpportunity(person.value)">Delete</button>
+          </td>
+          <td>
+            <button class="btn btn-link text-black" (click)="GenerateQuote(person)" data-toggle="modal"
+              data-target="#getQuote" style="font-size: 9px;">ReviewQuote</button>
+
+            <button class="btn btn-link text-black" (click)="GenerateProformaInvoice(person)" data-toggle="modal"
+              data-target="#getProformaInvoice"style="font-size: 9px;">ProformaInvoice</button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+          <tr>
+            <th style="width: 3%;"><input type="text" placeholder="Search ID" name="search-title"/></th>
+            <th><input type="text" placeholder="Search organization" name="search-organization-name"/></th>
+            <th><input type="text" placeholder="Search Geography" name="search-Geography-name"/></th>
+            <th><input type="text" placeholder="Search Industry" name="search-Industry-name"/></th>
+            <th><input type="text" placeholder="Search Offering " name="search-Offering-name"/></th>
+            <th><input type="text" placeholder="Search BussinessType " name="search-BussinessType-name"/></th>
+            <th><input type="text" placeholder="Search ServiceLine " name="search-service-name"/></th>
+  
+            <th><input type="text" placeholder="Search Forecast Value" name="search-address"/></th>
+            <th><input type="text" placeholder="Search Created" name="search-Created"/></th>
+            <th><input type="text" placeholder="Search Modified" name="search-Modified"/></th>
+            <th><input type="text" placeholder="Search Status" name="search-Status"/></th>
+            <th><input type="text" placeholder="Search Owner" name="search-Owner"/></th>
+            <th><input type="text" placeholder="Search Modification" name="search-Modification"/></th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>    
+
+
+
+    
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Opportunity</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row col-md-12">
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 mr-3 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">Who ?
+              </h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="inputFirstName">Name</label>
+                  <input type="text" name="Name" [(ngModel)]="Opportunity.Name" class="form-control" id="inputFirstName"
+                    placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputLastName">Last Name</label>
+                  <input type="text" name="LastName" [(ngModel)]="Opportunity.LastName" class="form-control"
+                    id="inputLastName" placeholder="Last Name">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="org">Organization</label>
+                  <input type="text" name="Organization" [(ngModel)]="Opportunity.Organization" class="form-control"
+                    id="org" placeholder="Organization">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="title">Designation</label>
+                  <input type="text" name="Title" [(ngModel)]="Opportunity.Title" class="form-control" id="title"
+                    placeholder="Manager">
+                </div>
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="mail">Email Address</label>
+                <input type="text" name="EmailAddress" [(ngModel)]="Opportunity.EmailAddress" class="form-control"
+                  id="mail" placeholder="ranaadigowni@icloud.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="phone">Phone</label>
+                <input type="text" name="Phone" [(ngModel)]="Opportunity.Phone" class="form-control" id="phone"
+                  placeholder="+919998887777">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="mobilePhone">MobilePhone</label>
+                <input type="text" name="MobilePhone" [(ngModel)]="Opportunity.MobilePhone" class="form-control"
+                  id="mobilePhone" placeholder="Phone(Mobile)">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="fax">Fax</label>
+                <input type="text" name="Fax" [(ngModel)]="Opportunity.Fax" class="form-control" id="fax"
+                  placeholder="Fax">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="web">Web Site</label>
+                <input type="text" name="WebSite" [(ngModel)]="Opportunity.WebSite" class="form-control" id="web"
+                  placeholder="www.axiscades.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="noEmp">Number of Employees</label>
+                <input type="text" name="NumberOfEmployees" [(ngModel)]="Opportunity.NumberOfEmployees"
+                  class="form-control" id="noEmp" placeholder="Number Of Employees">
+              </div>
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="address">Address</label>
+                <input type="text" name="Address1" [(ngModel)]="Opportunity.Address1" class="form-control" id="address"
+                  placeholder="53 Hafenstr">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="city">City</label>
+                <input type="text" name="City" [(ngModel)]="Opportunity.City" class="form-control" id="city"
+                  placeholder="Nodenham">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="state">State</label>
+                <input type="text" name="State" [(ngModel)]="Opportunity.State" class="form-control" id="state"
+                  placeholder="Bremen">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="pincode">Pin/Zip</label>
+                <input type="text" name="PostalCode" [(ngModel)]="Opportunity.PostalCode" class="form-control"
+                  id="pincode" placeholder="59805">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="country">Country</label>
+                <input type="text" name="Country" [(ngModel)]="Opportunity.Country" class="form-control" id="country"
+                  placeholder="Germany">
+              </div>
+            </div>
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">What ?</h5>
+              <div class="form-row col-md-12 Axis_IB">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="salestype">Type</label>
+                  <select type="text" name="salesType" [(ngModel)]="Opportunity.SalesType" class="custom-select Axis_IB"
+                    id="salestype">
+                    <option *ngFor="let service of UtilityData.OpportunityTypeList; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div *ngIf="Opportunity.SalesType === '2'" class="form-group col-md-12 Axis_IB">
+                <label for="salesTypeNature">Type Nature</label>
+                <select type="text" name="SalesTypeNature" [(ngModel)]="Opportunity.SalesTypeNature"
+                  class="custom-select Axis_IB" id="salesTypeNature">
+                  <option *ngFor="let service of UtilityData.SalesTypeNatureList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="geo">Geo</label>
+                <select type="text" name="geo" [(ngModel)]="Opportunity.Geo" class="custom-select Axis_IB" id="geo">
+                  <option *ngFor="let service of UtilityData.Geography; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="industry">Industry</label>
+                <input type="text" name="Industry" [(ngModel)]="Opportunity.Industry" class="form-control" id="industry"
+                  placeholder="Industry">
+              </div>
+
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="BusinessType">BusinessType</label>
+                <select type="text" name="BusinessType" [(ngModel)]="Opportunity.BusinessType"
+                  class="custom-select Axis_IB" id="BusinessType">
+                  <option *ngFor="let service of UtilityData.Businesslist; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Opportunity.BusinessType === '1' " class="form-group col-md-12 Axis_IB">
+                <label for="digitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="Opportunity.DigitalAndInnovation"
+                  class="custom-select Axis_IB" id="digitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.DI_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Opportunity.BusinessType === '2' " class="form-group col-md-12 Axis_IB">
+                <label for="digitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="Opportunity.DigitalAndInnovation"
+                  class="custom-select Axis_IB" id="digitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.Engg_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Opportunity.DigitalAndInnovation !='3' && Opportunity.BusinessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="servicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="Opportunity.DI_ServiceLines"
+                  class="custom-select Axis_IB" id="servicelines">
+                  <option *ngFor="let service of UtilityData.DI_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="Opportunity.DigitalAndInnovation !='3' && Opportunity.BusinessType === '2' "
+                class="form-group col-md-12 Axis_IB">
+                <label for="servicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="Opportunity.EnggServiceLines"
+                  class="custom-select Axis_IB" id="servicelines">
+                  <option *ngFor="let service of UtilityData.Engg_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="Opportunity.DigitalAndInnovation ==='3' && Opportunity.BusinessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="DIProducts">Service Lines</label>
+                <select type="text" name="DIProducts" [(ngModel)]="Opportunity.DI_Products"
+                  class="custom-select Axis_IB" id="DIProducts">
+                  <option *ngFor="let service of UtilityData.DI_ProductsList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="description">Description</label>
+                  <input type="text" name="Description" [(ngModel)]="Opportunity.Description" class="form-control"
+                    id="description" placeholder="Intrested In Demo">
+                </div>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="leadStatus">Source</label>
+                <select type="text" name="LeadSource" [(ngModel)]="Opportunity.LeadSource" class="custom-select Axis_IB"
+                  id="leadStatus">
+                  <option *ngFor="let service of UtilityData.SourceofContact; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="leadForcastedvalue">Unit Price</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <select type="text" name="ForecastedValueCurrency" [(ngModel)]="Opportunity.ForecastedValueCurrency"
+                    class="custom-select Axis_IB" id="leadForcastedvalue">
+                    <option *ngFor="let service of UtilityData.CurrencyStamp; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="UnitPrice" [(ngModel)]="Opportunity.UnitPrice"
+                    class="form-control" id="UnitPrice" placeholder="1000000">
+                </div>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="leadForcastedvalue">Forcasted value</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <input type="number" id="Quantiy" name="Quantiy" [(ngModel)]="Opportunity.Quantiy" min="1" max="100" placeholder="Qty" (ngModelChange)="onPercentChange($event)">
+
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="Forcastedvalue" [(ngModel)]="Opportunity.ForecastedValue"
+                    class="form-control" id="Forcastedvalue1" placeholder="1000000">
+                </div>
+              </div>
+
+            </div>
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">When ?</h5>
+              <div class="form-row-md-4 col-md-12"></div>
+              <div class="form-row-md-2 col-md-12">
+                <label for="CurrentState">Current State</label>
+                <select type="text" name="CurrentState" [(ngModel)]="Opportunity.CurrentState"
+                  class="custom-select Axis_IB" id="CurrentState">
+                  <option *ngFor="let service of UtilityData.OpportunityStatusList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-row-md-6 col-md-12"></div>
+
+              <!-- <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">Owner ?</h5> -->
+              <div class="form-row col-md-12">
+                <!-- <div class="form-group col-md-12 Axis_IB">
+                  <label for="userReponsible">User Reponsible</label>
+                  <select type="text" name="OwnerId" [(ngModel)]="Opportunity.OwnerId" class="custom-select Axis_IB"
+                    id="userReponsible"> -->
+                    <!-- <option *ngFor="let user of users" [value]="user.Id">
+                    {{user.Name}}
+                  </option> -->
+                    <!-- <option value="6">Rana Adigowni</option>
+                  </select>
+                </div> -->
+                <!-- <div class="form-row col-md-12">
+                  <label for="PaymentMode">Mode Of Payment</label>
+                  <select type="text" name="CurrentState" [(ngModel)]="Opportunity.PaymentMode"
+                    class="custom-select Axis_IB" id="PaymentMode">
+                    <option *ngFor="let service of PaymentMode " [value]="service">
+                      {{service}}
+                    </option>
+                  </select>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <label for="taginformation">Tag Information</label>
+              <input type="text" name="TagList" [(ngModel)]="Opportunity.TagList" class="form-control"
+                id="taginformation" placeholder="Intrested In Demo">
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;">Permissions</h5>
+              <label for="GroupType">Visbility</label>
+              <select type="text" name="Visiblity" [(ngModel)]="Opportunity.Visiblity" class="custom-select Axis_IB"
+                id="GroupType">
+                <option *ngFor="let service of UtilityData.VisibilityList; index as i; " [value]="i">
+                  {{service}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="AddOppertunity()">Add
+          Opportunity
+          <i class="fa fa-spinner fa-spin" *ngIf="AddOpp"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Opportunity</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row col-md-12">
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 mr-3 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">Who ?
+              </h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="CLEinputFirstName">Name</label>
+                  <input type="text" name="CLEinputFirstName" [(ngModel)]="CurrentLeadEdit.name" class="form-control"
+                    id="CLEinputFirstName" placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="CLEinputLastName">Last Name</label>
+                  <input type="text" name="CLEinputLastName" [(ngModel)]="CurrentLeadEdit.lastName" class="form-control"
+                    id="CLEinputLastName" placeholder="Last Name">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="CLEorg">Organization</label>
+                  <input type="text" name="CLEorg" [(ngModel)]="CurrentLeadEdit.organization" class="form-control"
+                    id="CLEorg" placeholder="Organization">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="CLEtitle">Designation</label>
+                  <input type="text" name="CLETitle" [(ngModel)]="CurrentLeadEdit.title" class="form-control"
+                    id="CLEtitle" placeholder="Manager">
+                </div>
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEmail">Email Address</label>
+                <input type="text" name="CLEmail" [(ngModel)]="CurrentLeadEdit.emailAddress" class="form-control"
+                  id="CLEmail" placeholder="ranaadigowni@icloud.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEphone">Phone</label>
+                <input type="text" name="CLEPhone" [(ngModel)]="CurrentLeadEdit.phone" class="form-control"
+                  id="CLEphone" placeholder="+919998887777">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEmobilePhone">MobilePhone</label>
+                <input type="text" name="CLEMobilePhone" [(ngModel)]="CurrentLeadEdit.mobilePhone" class="form-control"
+                  id="CLEmobilePhone" placeholder="Phone(Mobile)">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEfax">Fax</label>
+                <input type="text" name="CLEFax" [(ngModel)]="CurrentLeadEdit.fax" class="form-control" id="CLEfax"
+                  placeholder="Fax">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEweb">Web Site</label>
+                <input type="text" name="CLEWebSite" [(ngModel)]="CurrentLeadEdit.webSite" class="form-control"
+                  id="CLEweb" placeholder="www.axiscades.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEnoEmp">Number of Employees</label>
+                <input type="text" name="CLENumberOfEmployees" [(ngModel)]="CurrentLeadEdit.numberOfEmployees"
+                  class="form-control" id="CLEnoEmp" placeholder="Number Of Employees">
+              </div>
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="CLEaddress">Address</label>
+                <input type="text" name="CLEAddress1" [(ngModel)]="CurrentLeadEdit.address1" class="form-control"
+                  id="CLEaddress" placeholder="53 Hafenstr">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEcity">City</label>
+                <input type="text" name="CLECity" [(ngModel)]="CurrentLeadEdit.city" class="form-control" id="CLEcity"
+                  placeholder="Nodenham">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEstate">State</label>
+                <input type="text" name="CLEState" [(ngModel)]="CurrentLeadEdit.state" class="form-control"
+                  id="CLEstate" placeholder="Bremen">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEpincode">Pin/Zip</label>
+                <input type="text" name="CLEPostalCode" [(ngModel)]="CurrentLeadEdit.postalCode" class="form-control"
+                  id="CLEpincode" placeholder="59805">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="CLEcountry">Country</label>
+                <input type="text" name="CLECountry" [(ngModel)]="CurrentLeadEdit.country" class="form-control"
+                  id="CLEcountry" placeholder="Germany">
+              </div>
+            </div>
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">What ?</h5>
+              <div class="form-row col-md-12 Axis_IB">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="CLEsalestype">Type</label>
+                  <select type="text" name="CLEsalesType" [(ngModel)]="CurrentLeadEdit.salesType"
+                    class="custom-select Axis_IB" id="CLEsalestype">
+                    <option *ngFor="let service of UtilityData.OpportunityTypeList; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div *ngIf="CurrentLeadEdit.salesType === '2'" class="form-group col-md-12 Axis_IB">
+                <label for="CLEsalesTypeNature">Type Nature</label>
+                <select type="text" name="CLESalesTypeNature" [(ngModel)]="CurrentLeadEdit.salesTypeNature"
+                  class="custom-select Axis_IB" id="CLEsalesTypeNature">
+                  <option *ngFor="let service of UtilityData.SalesTypeNatureList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="CLEgeo">Geo</label>
+                <select type="text" name="CLEgeo" [(ngModel)]="CurrentLeadEdit.geo" class="custom-select Axis_IB"
+                  id="CLEgeo">
+                  <option *ngFor="let service of UtilityData.Geography; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="CLEindustry">Industry</label>
+                <input type="text" name="CLEIndustry" [(ngModel)]="CurrentLeadEdit.industry" class="form-control"
+                  id="CLEindustry" placeholder="Industry">
+              </div>
+
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="CLEbusinessType">BusinessType</label>
+                <select type="text" name="CLEbusinessType" [(ngModel)]="CurrentLeadEdit.businessType"
+                  class="custom-select Axis_IB" id="CLEbusinessType">
+                  <option *ngFor="let service of UtilityData.Businesslist; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentLeadEdit.businessType === '1' ||CurrentLeadEdit.businessType === 1 "
+                class="form-group col-md-12 Axis_IB">
+                <label for="CLEdigitalAndInnovation">Offering</label>
+                <select type="text" name="CLEdigitalAndInnovation" [(ngModel)]="CurrentLeadEdit.digitalAndInnovation"
+                  class="custom-select Axis_IB" id="CLEdigitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.DI_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentLeadEdit.businessType === '2' || CurrentLeadEdit.businessType === 2"
+                class="form-group col-md-12 Axis_IB">
+                <label for="CLEdigitalAndInnovation">Offering</label>
+                <select type="text" name="CLEdigitalAndInnovation" [(ngModel)]="CurrentLeadEdit.digitalAndInnovation"
+                  class="custom-select Axis_IB" id="CLEdigitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.Engg_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentLeadEdit.digitalAndInnovation !='3' && CurrentLeadEdit.businessType === '1'
+                            ||CurrentLeadEdit.digitalAndInnovation !=3 && CurrentLeadEdit.businessType === 1"
+                class="form-group col-md-12 Axis_IB">
+                <label for="CLEservicelines">Service Lines</label>
+                <select type="text" name="CLEservicelines" [(ngModel)]="CurrentLeadEdit.dI_ServiceLines"
+                  class="custom-select Axis_IB" id="CLEservicelines">
+                  <option *ngFor="let service of UtilityData.DI_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="CurrentLeadEdit.digitalAndInnovation !='3' && CurrentLeadEdit.businessType === '2' ||
+                                CurrentLeadEdit.digitalAndInnovation !=3 && CurrentLeadEdit.businessType === 2  "
+                class="form-group col-md-12 Axis_IB">
+                <label for="CLEservicelines">Service Lines</label>
+                <select type="text" name="CLEserviceLines" [(ngModel)]="CurrentLeadEdit.enggServiceLines"
+                  class="custom-select Axis_IB" id="CLEservicelines">
+                  <option *ngFor="let service of UtilityData.Engg_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="CurrentLeadEdit.digitalAndInnovation ==='3' && CurrentLeadEdit.businessType === '1'
+                            ||CurrentLeadEdit.digitalAndInnovation ===3 && CurrentLeadEdit.businessType === 1"
+                class="form-group col-md-12 Axis_IB">
+                <label for="CLEDIProducts">Service Lines</label>
+                <select type="text" name="CLEDIProducts" [(ngModel)]="CurrentLeadEdit.diProducts"
+                  class="custom-select Axis_IB" id="CLEDIProducts">
+                  <option *ngFor="let service of UtilityData.DI_ProductsList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="CLEdescription">Description</label>
+                  <input type="text" name="CLEdescription" [(ngModel)]="CurrentLeadEdit.description"
+                    class="form-control" id="CLEdescription" placeholder="Intrested In Demo">
+                </div>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="CLEleadSource">Source</label>
+                <select type="text" name="CLEleadSource" [(ngModel)]="CurrentLeadEdit.leadSource"
+                  class="custom-select Axis_IB" id="CLEleadSource">
+                  <option *ngFor="let service of UtilityData.SourceofContact; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="CLEForcastedvalue">Unit Price</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <select type="text" name="CLEForcastedvalue" [(ngModel)]="CurrentLeadEdit.forecastedValueCurrency"
+                    class="custom-select Axis_IB" id="CLEForcastedvalue">
+                    <option *ngFor="let service of UtilityData.CurrencyStamp; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="UnitPrice" [(ngModel)]="CurrentLeadEdit.UnitPrice"
+                    class="form-control" id="UnitPrice" placeholder="1000000">
+                </div>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="CLEForcastedvalue">Forcasted value</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <input type="number" id="Quantiy" name="Quantiy" [(ngModel)]="CurrentLeadEdit.Quantiy" min="1" max="100" placeholder="Qty" (ngModelChange)="onPercentChange($event)">
+                 
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="Forcastedvalue" [(ngModel)]="CurrentLeadEdit.forecastedValue"
+                    class="form-control" id="Forcastedvalue" placeholder="1000000">
+                </div>
+              </div>
+            </div>
+            <div class="form-row col-md-4 d-flex align-items-start">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">When ?</h5>
+              <div class="form-row col-md-12">
+                <div class="form-row col-md-12 Axis_IB">
+                  <label for="CLECurrentState">Current State</label>
+                  <select type="text" name="CLECurrentState" [(ngModel)]="CurrentLeadEdit.currentState"
+                    class="custom-select Axis_IB" id="CLECurrentState">
+                    <option *ngFor="let service of UtilityData.OpportunityStatusList; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-row col-md-12"><br><br></div>
+               
+                <!-- <div class="form-row col-md-12">
+                  <label for="PaymentMode">Mode Of Payment</label>
+                  <select type="text" name="CurrentState" [(ngModel)]="CurrentLeadEdit.PaymentMode"
+                    class="custom-select Axis_IB" id="PaymentMode">
+                    <option *ngFor="let service of PaymentMode " [value]="service">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div> -->
+              <!-- <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">Owner ?</h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="userReponsible">User Reponsible</label>
+                  <select type="text" name="OwnerId" [(ngModel)]="CurrentLeadEdit.ownerId" class="custom-select Axis_IB"
+                    id="userReponsible">
+                    <option *ngFor="let user of users" [value]="user.Id">
+                    {{user.Name}}
+                  </option>
+                    <option value="6">Rana Adigowni</option>
+                  </select>
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <label for="CLEtaginformation">Tag Information</label>
+              <input type="text" name="TagList" [(ngModel)]="CurrentLeadEdit.tagList" class="form-control"
+                id="CLEtaginformation" placeholder="Intrested In Demo">
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;">Permissions</h5>
+              <label for="CLEGroupType">Visbility</label>
+              <select type="text" name="Visiblity" [(ngModel)]="CurrentLeadEdit.visiblity" class="custom-select Axis_IB"
+                id="CLEGroupType">
+                <option *ngFor="let service of UtilityData.VisibilityList; index as i; " [value]="i">
+                  {{service}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="AddEditOpportunityLead()">Save
+          <i class="fa fa-spinner fa-spin" *ngIf="Saveloading"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="getQuote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>Commercial Offering For {{ QuoteOffering.diProducts | DAProducts }}</h1>
+        <img src="./../../assets/AxiscadesWithLogo.png">
+      </div>
+      <div class="modal-body">
+        <div class="form-group col-md-12 Axis_IB">
+          <label for="DeviceQuantity">Device Quantity</label>
+          <input type="number" name="DeviceQuantity" [(ngModel)]="DeviceQuantity" class="form-control"
+            id="DeviceQuantity" placeholder="Qty">
+        </div>
+        <div class="form-group col-md-12 Axis_IB">
+          <label for="CommentsRemarks">Remarks</label>
+          <input type="text" name="CommentsRemarks" [(ngModel)]="CommentsRemarks" class="form-control"
+            id="CommentsRemarks" placeholder="For Educational Institutions">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="DownloadPdf()">Download pdf</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="getProformaInvoice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>Proforma Invoice For {{ QuoteOffering.diProducts | DAProducts }}</h1>
+        <img src="./../../assets/AxiscadesWithLogo.png">
+      </div>
+      <div class="modal-body">
+        <div class="form-group col-md-12 Axis_IB">
+          <label for="DeviceQuantity">Device Quantity</label>
+          <input type="number" name="PerformaDeviceQuantity" [(ngModel)]="PerformaDeviceQuantity" class="form-control"
+            id="DeviceQuantity" placeholder="Qty">
+        </div>
+
+        <div class="form-group col-md-12 Axis_IB">
+          <label for="CommentsRemarks">Remarks</label>
+          <input type="text" name="PerformaCommentsRemarks" [(ngModel)]="PerformaCommentsRemarks" class="form-control"
+            id="CommentsRemarks" placeholder="For Educational Institutions">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="DownloadProformaInvoicePdf()">Download
+          pdf</button>
+      </div>
+    </div>
+  </div>
+</div>

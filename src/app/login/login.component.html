@@ -1,0 +1,55 @@
+<body class="d-flex text-center">
+  <div class="form-signin align-self-center ">
+    <img class="mt-3 mb-0" src="../../assets/AXISCADES_LOGO.png" alt="WeCareEST Logo" width="50">
+    <hr />
+    <div class="body3">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#otp" >Login
+          </a>
+        </li>
+      </ul>
+      <div id="loginOptions" class="tab-content mt-1">
+        <div class="tab-pane fade active show" id="otp">
+          <form class="login">
+            <input id="phoneNumber" name="phoneNumber" [(ngModel)]="phoneNumber" type="text" class="form-control mb-1"
+              placeholder="Phone Number (e.g. +919876543210)" required autofocus>
+            <input id="password" name="password" [(ngModel)]="password" name="Password" type="password"
+              class="form-control mb-1" placeholder="Password" required autofocus>
+            <!-- <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <input id="password" name="password" [(ngModel)]="password" name="Password" type="text"
+                  class="form-control mb-1" placeholder="Password" required autofocus>
+              </div>
+              <div>
+                <a id="generateOtp" class="btn btn-secondary text-light btn-block pt-2" (click)="GetOtp()">Generate OTP</a>
+              </div>
+            </div> -->
+
+            <!-- <div class="checkbox my-3">
+              <label>
+                <input class="form-check-input" type="checkbox" name="RememberMe" value="true" id="RememberMeOtp" />
+                <input hidden name="RememberMe" value="false" />
+                <label for="RememberMeOtp" class="form-check-label">Remember Me ?</label>
+              </label>
+            </div>  -->
+            <button class="btn btn-primary btn-block my-3" style="height:44px;" type="submit"
+              (click)="Login()">Login
+              <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+            </button>
+            
+              <!-- <div class="spinner-border" role="status" >
+                <span class="sr-only">Loading...</span>
+              </div> -->
+          
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <p class="mt-4 mb-0 text-muted"><small>&copy; 2021 - AXISCADES Technologies Limited.</small></p>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+  </div>
+  
+
+</body>

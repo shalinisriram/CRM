@@ -1,0 +1,750 @@
+<div role="main" class="col-md-12 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <div class="pull-left">
+      <h1 class="h2">Projects</h1>
+      <div class="d-flex justify-content-between">
+        <ejs-daterangepicker id='daterangepicker' placeholder='Select a range' [(ngModel)]='value'>
+        </ejs-daterangepicker>
+        <button type="button" class="btn btn-primary  pr-2 ml-3" (click)="dateUpdate();GetDataOnSelectedDates()">Update
+          <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+        </button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">New
+      Project</button>
+  </div>
+  <div class="table-responsive">
+
+
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover">
+      <thead>
+        <tr>
+         <th>#</th>
+          <th>Organization</th>
+          <th>Geography</th>
+          <th>Industry</th>
+          <th>Offering</th>
+          <th>BussinessType</th>
+         <th>serviceLines</th>
+          <th>Forecast Value</th>
+          <th>Created On</th>
+          <th>Modified On</th>
+          <th>Status</th>
+          <th>Owner</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let person of Datalist">
+          <td>{{ person.id }}</td>
+          <td>{{ person.value.organization }}</td>
+          <td>{{ person.value.geo | GeoPipe }}</td>
+          <td>{{ person.value.industry }}</td>
+          <td>{{ person.value.digitalAndInnovation | OfferingPipe }}</td>
+          <td>{{ person.value.businessType | BusinessPipe }}</td>
+          
+          <td>
+            <div *ngIf="person.value.digitalAndInnovation !=3 && person.value.businessType == 1">
+               {{person.value.dI_ServiceLines | DaTmProjects}}
+            </div>
+  
+            <div *ngIf="person.value.digitalAndInnovation != 3 && person.value.businessType == 2">
+               {{person.value.enggServiceLines | EnggTmProjects}}
+            </div>
+  
+            <div *ngIf="person.value.digitalAndInnovation == 3 && person.value.businessType == 1">
+              {{person.value.diProducts | DAProducts}}
+            </div>
+          </td>
+
+          
+          <td>{{person.value.forecastedValue }} {{ person.value.forecastedValueCurrency |CurrencyPipe }}</td>
+          <td>{{person.value.createdOn | date}}</td>
+          <td>{{person.value.modifiedOn | date}}</td>
+          <td>
+           
+              {{person.value.status | LeadStatus}}
+            </td>
+          <!-- <td>{{lead.value.owner.userName}}</td> -->
+          <td>
+            {{Username}}
+           
+          </td>
+          <td>
+            <button class="btn btn-link text-black" (click)="editOpportunity(person)" data-toggle="modal"
+              data-target="#exampleModal1">Edit</button>
+            <button class="btn btn-link text-black" (click)="deleteDelete(person)">Delete</button></td>
+        </tr>
+      </tbody>
+      <tfoot>
+          <tr>
+            <th><input type="text" placeholder="Search ID" name="search-title"/></th>
+            <th><input type="text" placeholder="Search organization" name="search-organization-name"/></th>
+            <th><input type="text" placeholder="Search Geography" name="search-Geography-name"/></th>
+            <th><input type="text" placeholder="Search Industry" name="search-Industry-name"/></th>
+            <th><input type="text" placeholder="Search Offering " name="search-Offering-name"/></th>
+            <th><input type="text" placeholder="Search BussinessType " name="search-BussinessType-name"/></th>
+            <th><input type="text" placeholder="Search ServiceLine " name="search-service-name"/></th>
+  
+            <th><input type="text" placeholder="Search Forecast Value" name="search-address"/></th>
+            <th><input type="text" placeholder="Search Created" name="search-Created"/></th>
+            <th><input type="text" placeholder="Search Modified" name="search-Modified"/></th>
+            <th><input type="text" placeholder="Search Status" name="search-Status"/></th>
+            <th><input type="text" placeholder="Search Owner" name="search-Owner"/></th>
+            <th><input type="text" placeholder="Search Modification" name="search-Modification"/></th>
+          </tr>
+        </tfoot>
+      </table>
+  </div>
+
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row col-md-12">
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 mr-3 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">Who ?
+              </h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="inputFirstName">Name</label>
+                  <input type="text" name="Name" [(ngModel)]="Project.Name" class="form-control" id="inputFirstName"
+                    placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputLastName">Last Name</label>
+                  <input type="text" name="LastName" [(ngModel)]="Project.LastName" class="form-control"
+                    id="inputLastName" placeholder="Last Name">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="org">Organization</label>
+                  <input type="text" name="Organization" [(ngModel)]="Project.Organization" class="form-control"
+                    id="org" placeholder="Organization">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="title">Designation</label>
+                  <input type="text" name="Title" [(ngModel)]="Project.Title" class="form-control" id="title"
+                    placeholder="Manager">
+                </div>
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="mail">Email Address</label>
+                <input type="text" name="EmailAddress" [(ngModel)]="Project.EmailAddress" class="form-control" id="mail"
+                  placeholder="ranaadigowni@icloud.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="phone">Phone</label>
+                <input type="text" name="Phone" [(ngModel)]="Project.Phone" class="form-control" id="phone"
+                  placeholder="+919998887777">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="mobilePhone">MobilePhone</label>
+                <input type="text" name="MobilePhone" [(ngModel)]="Project.MobilePhone" class="form-control"
+                  id="mobilePhone" placeholder="Phone(Mobile)">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="fax">Fax</label>
+                <input type="text" name="Fax" [(ngModel)]="Project.Fax" class="form-control" id="fax" placeholder="Fax">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="web">Web Site</label>
+                <input type="text" name="WebSite" [(ngModel)]="Project.WebSite" class="form-control" id="web"
+                  placeholder="www.axiscades.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="noEmp">Number of Employees</label>
+                <input type="text" name="NumberOfEmployees" [(ngModel)]="Project.NumberOfEmployees" class="form-control"
+                  id="noEmp" placeholder="Number Of Employees">
+              </div>
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="address">Address</label>
+                <input type="text" name="Address1" [(ngModel)]="Project.Address1" class="form-control" id="address"
+                  placeholder="53 Hafenstr">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="city">City</label>
+                <input type="text" name="City" [(ngModel)]="Project.City" class="form-control" id="city"
+                  placeholder="Nodenham">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="state">State</label>
+                <input type="text" name="State" [(ngModel)]="Project.State" class="form-control" id="state"
+                  placeholder="Bremen">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="pincode">Pin/Zip</label>
+                <input type="text" name="PostalCode" [(ngModel)]="Project.PostalCode" class="form-control" id="pincode"
+                  placeholder="59805">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="country">Country</label>
+                <input type="text" name="Country" [(ngModel)]="Project.Country" class="form-control" id="country"
+                  placeholder="Germany">
+              </div>
+            </div>
+
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">What ?</h5>
+              <div class="form-row col-md-12 Axis_IB">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="salestype">Type</label>
+                  <select type="text" name="salesType" [(ngModel)]="Project.SalesType" class="custom-select Axis_IB"
+                    id="salestype">
+                    <option *ngFor="let service of UtilityData.OpportunityTypeList; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div *ngIf="Project.SalesType === '2'" class="form-group col-md-12 Axis_IB">
+                <label for="salesTypeNature">Type Nature</label>
+                <select type="text" name="SalesTypeNature" [(ngModel)]="Project.SalesTypeNature"
+                  class="custom-select Axis_IB" id="salesTypeNature">
+                  <option *ngFor="let service of UtilityData.SalesTypeNatureList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="geo">Geo</label>
+                <select type="text" name="geo" [(ngModel)]="Project.Geo" class="custom-select Axis_IB" id="geo">
+                  <option *ngFor="let service of UtilityData.Geography; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="industry">Industry</label>
+                <input type="text" name="Industry" [(ngModel)]="Project.Industry" class="form-control" id="industry"
+                  placeholder="Industry">
+              </div>
+
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="BusinessType">BusinessType</label>
+                <select type="text" name="BusinessType" [(ngModel)]="Project.BusinessType" class="custom-select Axis_IB"
+                  id="BusinessType">
+                  <option *ngFor="let service of UtilityData.Businesslist; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Project.BusinessType === '1' " class="form-group col-md-12 Axis_IB">
+                <label for="digitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="Project.DigitalAndInnovation"
+                  class="custom-select Axis_IB" id="digitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.DI_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Project.BusinessType === '2' " class="form-group col-md-12 Axis_IB">
+                <label for="digitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="Project.DigitalAndInnovation"
+                  class="custom-select Axis_IB" id="digitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.Engg_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="Project.DigitalAndInnovation !='3' && Project.BusinessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="servicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="Project.DI_ServiceLines"
+                  class="custom-select Axis_IB" id="servicelines">
+                  <option *ngFor="let service of UtilityData.DI_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="Project.DigitalAndInnovation !='3' && Project.BusinessType === '2' "
+                class="form-group col-md-12 Axis_IB">
+                <label for="servicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="Project.EnggServiceLines"
+                  class="custom-select Axis_IB" id="servicelines">
+                  <option *ngFor="let service of UtilityData.Engg_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="Project.DigitalAndInnovation ==='3' && Project.BusinessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="DIProducts">Service Lines</label>
+                <select type="text" name="DIProducts" [(ngModel)]="Project.DI_Products" class="custom-select Axis_IB"
+                  id="DIProducts">
+                  <option *ngFor="let service of UtilityData.DI_ProductsList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="description">Description</label>
+                  <input type="text" name="Description" [(ngModel)]="Project.Description" class="form-control"
+                    id="description" placeholder="Intrested In Demo">
+                </div>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="leadSource">Source</label>
+                <select type="text" name="LeadSource" [(ngModel)]="Project.LeadSource" class="custom-select Axis_IB"
+                  id="leadSource">
+                  <option *ngFor="let service of UtilityData.SourceofContact; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="CurrencyStampForcastedvalue">Unit Price</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <select type="text" name="ForecastedValueCurrency" [(ngModel)]="Project.ForecastedValueCurrency"
+                    class="custom-select Axis_IB" id="CurrencyStampForcastedvalue">
+                    <option *ngFor="let service of UtilityData.CurrencyStamp; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="UnitPrice" [(ngModel)]="Project.UnitPrice" class="form-control"
+                    id="UnitPrice" placeholder="1000000">
+                </div>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="CurrencyStampForcastedvalue">Forcasted value</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <input type="number" id="Quantiy" name="Quantiy" [(ngModel)]="Project.Quantiy" min="1" max="100" placeholder="Qty" (ngModelChange)="onPercentChange($event)">
+                  
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="Forcastedvalue" [(ngModel)]="Project.ForecastedValue" class="form-control"
+                    id="Forcastedvalue" placeholder="1000000">
+                </div>
+              </div>
+            </div>
+            <div class="form-row col-md-4 d-flex align-items-start">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">When ?</h5>
+              <div class="form-row col-md-12">
+                <label for="leadStatus">Status</label>
+                <select type="text" name="LeadStatus" [(ngModel)]="Project.Status" class="custom-select Axis_IB"
+                  id="leadStatus">
+                  <option *ngFor="let service of UtilityData.ProjectStatus; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-row col-md-12" *ngIf="Project.Status === '3' ||Project.Status === '2'">
+                <label for="leadStatus">Payment</label>
+                <select type="text" name="LeadStatus" [(ngModel)]="Project.PaymentMode" class="custom-select Axis_IB"
+                  id="leadPayment">
+                  <option *ngFor="let service of PaymentMode" [value]="service">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-row col-md-12">
+                <div *ngIf="Project.Status === '3'" class="form-group col-md-12 Axis_IB">
+                  <label for="ProjectnpState"> Inprogress State</label>
+                  <select type="text" name="InpState" [(ngModel)]="Project.OpportunityInpState"
+                    class="custom-select Axis_IB" id="ProjectnpState">
+                    <option *ngFor="let service of UtilityData.ProjectInpStatus; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <!-- <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">Owner ?</h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="userReponsible">User Reponsible</label>
+                  <select type="text" name="OwnerId" [(ngModel)]="Project.OwnerId" class="custom-select Axis_IB"
+                    id="userReponsible">
+                    <option *ngFor="let user of users" [value]="user.Id">
+                    {{user.Name}}
+                  </option>
+                    <option value="6">Rana Adigowni</option>
+                  </select>
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <label for="taginformation1">Tag Information</label>
+              <input type="text" name="TagList" [(ngModel)]="Project.TagList" class="form-control" id="taginformation1"
+                placeholder="Intrested In Demo">
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;">Permissions</h5>
+              <label for="Visbility">Visbility</label>
+              <select type="text" name="Visiblity" [(ngModel)]="Project.Visiblity" class="custom-select Axis_IB"
+                id="Visbility">
+                <option *ngFor="let service of UtilityData.VisibilityList; index as i; " [value]="i">
+                  {{service}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="AddOppertunity()">Add
+          Project</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row col-md-12">
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 mr-3 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">Who ?
+              </h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="EditinputFirstName">Name</label>
+                  <input type="text" name="Name" [(ngModel)]="CurrentProjectEdit.name" class="form-control"
+                    id="EditinputFirstName" placeholder="First Name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="EditinputLastName">Last Name</label>
+                  <input type="text" name="LastName" [(ngModel)]="CurrentProjectEdit.lastName" class="form-control"
+                    id="EditinputLastName" placeholder="Last Name">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="Editorg">Organization</label>
+                  <input type="text" name="Organization" [(ngModel)]="CurrentProjectEdit.organization"
+                    class="form-control" id="Editorg" placeholder="Organization">
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <label for="Edittitle">Designation</label>
+                  <input type="text" name="Title" [(ngModel)]="CurrentProjectEdit.title" class="form-control"
+                    id="Edittitle" placeholder="Manager">
+                </div>
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editmail">Email Address</label>
+                <input type="text" name="EmailAddress" [(ngModel)]="CurrentProjectEdit.emailAddress"
+                  class="form-control" id="Editmail" placeholder="ranaadigowni@icloud.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editphone">Phone</label>
+                <input type="text" name="Phone" [(ngModel)]="CurrentProjectEdit.phone" class="form-control"
+                  id="Editphone" placeholder="+919998887777">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="EditmobilePhone">MobilePhone</label>
+                <input type="text" name="MobilePhone" [(ngModel)]="CurrentProjectEdit.mobilePhone" class="form-control"
+                  id="EditmobilePhone" placeholder="Phone(Mobile)">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editfax">Fax</label>
+                <input type="text" name="Fax" [(ngModel)]="CurrentProjectEdit.fax" class="form-control" id="Editfax"
+                  placeholder="Fax">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editweb">Web Site</label>
+                <input type="text" name="WebSite" [(ngModel)]="CurrentProjectEdit.webSite" class="form-control"
+                  id="Editweb" placeholder="www.axiscades.com">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="EditnoEmp">Number of Employees</label>
+                <input type="text" name="NumberOfEmployees" [(ngModel)]="CurrentProjectEdit.numberOfEmployees"
+                  class="form-control" id="EditnoEmp" placeholder="Number Of Employees">
+              </div>
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="Editaddress">Address</label>
+                <input type="text" name="Address1" [(ngModel)]="CurrentProjectEdit.address1" class="form-control"
+                  id="Editaddress" placeholder="53 Hafenstr">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editcity">City</label>
+                <input type="text" name="City" [(ngModel)]="CurrentProjectEdit.city" class="form-control" id="Editcity"
+                  placeholder="Nodenham">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editstate">State</label>
+                <input type="text" name="State" [(ngModel)]="CurrentProjectEdit.state" class="form-control"
+                  id="Editstate" placeholder="Bremen">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editpincode">Pin/Zip</label>
+                <input type="text" name="PostalCode" [(ngModel)]="CurrentProjectEdit.postalCode" class="form-control"
+                  id="Editpincode" placeholder="59805">
+              </div>
+              <div class="form-group col-md-6 Axis_IB">
+                <label for="Editcountry">Country</label>
+                <input type="text" name="Country" [(ngModel)]="CurrentProjectEdit.country" class="form-control"
+                  id="Editcountry" placeholder="Germany">
+              </div>
+            </div>
+            <div class="form-row col-md-4">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%">What ?</h5>
+              <div class="form-row col-md-12 Axis_IB">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="Editsalestype">Type</label>
+                  <select type="text" name="salesType" [(ngModel)]="CurrentProjectEdit.salesType"
+                    class="custom-select Axis_IB" id="Editsalestype">
+                    <option *ngFor="let service of UtilityData.OpportunityTypeList; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div *ngIf="CurrentProjectEdit.SalesType === '2'" class="form-group col-md-12 Axis_IB">
+                <label for="EditsalesTypeNature">Type Nature</label>
+                <select type="text" name="SalesTypeNature" [(ngModel)]="CurrentProjectEdit.salesTypeNature"
+                  class="custom-select Axis_IB" id="EditsalesTypeNature">
+                  <option *ngFor="let service of UtilityData.SalesTypeNatureList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="Editgeo">Geo</label>
+                <select type="text" name="geo" [(ngModel)]="CurrentProjectEdit.geo" class="custom-select Axis_IB"
+                  id="Editgeo">
+                  <option *ngFor="let service of UtilityData.Geography; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="Editindustry">Industry</label>
+                <input type="text" name="Industry" [(ngModel)]="CurrentProjectEdit.industry" class="form-control"
+                  id="Editindustry" placeholder="Industry">
+              </div>
+
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="EditBusinessType">BusinessType</label>
+                <select type="text" name="BusinessType" [(ngModel)]="CurrentProjectEdit.businessType"
+                  class="custom-select Axis_IB" id="EditBusinessType">
+                  <option *ngFor="let service of UtilityData.Businesslist; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentProjectEdit.businessType === '1' " class="form-group col-md-12 Axis_IB">
+                <label for="EditdigitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="CurrentProjectEdit.digitalAndInnovation"
+                  class="custom-select Axis_IB" id="EditdigitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.DI_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentProjectEdit.businessType === '2' " class="form-group col-md-12 Axis_IB">
+                <label for="EditdigitalAndInnovation">Offering</label>
+                <select type="text" name="digitalAndInnovation" [(ngModel)]="CurrentProjectEdit.digitalAndInnovation"
+                  class="custom-select Axis_IB" id="EditdigitalAndInnovation">
+                  <option *ngFor="let service of UtilityData.Engg_OfferingList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="CurrentProjectEdit.digitalAndInnovation !='3' && CurrentProjectEdit.businessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="Editservicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="CurrentProjectEdit.dI_ServiceLines"
+                  class="custom-select Axis_IB" id="Editservicelines">
+                  <option *ngFor="let service of UtilityData.DI_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="CurrentProjectEdit.digitalAndInnovation !='3' && CurrentProjectEdit.businessType === '2' "
+                class="form-group col-md-12 Axis_IB">
+                <label for="Editservicelines">Service Lines</label>
+                <select type="text" name="serviceLines" [(ngModel)]="CurrentProjectEdit.enggServiceLines"
+                  class="custom-select Axis_IB" id="Editservicelines">
+                  <option *ngFor="let service of UtilityData.Engg_ServiceLinesList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+              <div *ngIf="CurrentProjectEdit.digitalAndInnovation ==='3' && CurrentProjectEdit.businessType === '1'"
+                class="form-group col-md-12 Axis_IB">
+                <label for="EditDIProducts">Service Lines</label>
+                <select type="text" name="DIProducts" [(ngModel)]="CurrentProjectEdit.dI_Products"
+                  class="custom-select Axis_IB" id="EditDIProducts">
+                  <option *ngFor="let service of UtilityData.DI_ProductsList; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+
+
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="Editdescription">Description</label>
+                  <input type="text" name="Description" [(ngModel)]="CurrentProjectEdit.description"
+                    class="form-control" id="Editdescription" placeholder="Intrested In Demo">
+                </div>
+              </div>
+
+              <div class="form-group col-md-12 Axis_IB">
+                <label for="EditleadSource">Source</label>
+                <select type="text" name="LeadSource" [(ngModel)]="CurrentProjectEdit.leadSource"
+                  class="custom-select Axis_IB" id="EditleadSource">
+                  <option *ngFor="let service of UtilityData.SourceofContact; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="EditForcastedvalue">Unit Price</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <select type="text" name="ForecastedValueCurrency"
+                    [(ngModel)]="CurrentProjectEdit.forecastedValueCurrency" class="custom-select Axis_IB"
+                    id="Forcastedvalue2">
+                    <option *ngFor="let service of UtilityData.CurrencyStamp; index as i; " [value]="i">
+                      {{service}}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="UnitPrice" [(ngModel)]="CurrentProjectEdit.UnitPrice"
+                    class="form-control" id="UnitPrice" placeholder="1000000">
+                </div>
+              </div>
+
+              <div class="d-flex form-group col-md-12 Axis_IB">
+                <label for="EditForcastedvalue">Forcasted value</label>
+                <div class="form-group col-md-3 Axis_IB">
+                  <input type="number" id="Quantiy" name="Quantiy" [(ngModel)]="CurrentProjectEdit.Quantiy" min="1" max="100" placeholder="Qty" (ngModelChange)="onPercentChange($event)">
+
+                </div>
+                <div class="form-group col-md-6 Axis_IB">
+                  <input type="text" name="Forcastedvalue" [(ngModel)]="CurrentProjectEdit.forecastedValue"
+                    class="form-control" id="EditForcastedvalue" placeholder="1000000">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="form-row col-md-4 d-flex align-items-start">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">When ?</h5>
+              <div class="form-row col-md-12">
+                <label for="EditleadStatus">Status</label>
+                <select type="text" name="LeadStatus" [(ngModel)]="CurrentProjectEdit.status"
+                  class="custom-select Axis_IB" id="EditleadStatus">
+                  <option *ngFor="let service of UtilityData.ProjectStatus; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-row col-md-12">
+                <label for="leadStatus">Payment</label>
+                <select type="text" name="LeadStatus" [(ngModel)]="CurrentProjectEdit.PaymentMode" class="custom-select Axis_IB"
+                  id="leadPayment">
+                  <option *ngFor="let service of PaymentMode" [value]="service">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+              
+              <div *ngIf="CurrentProjectEdit.status === '3'" class="form-group col-md-12 Axis_IB">
+                <label for="EditProjectnpState"> Inprogress State</label>
+                <select type="text" name="InpState" [(ngModel)]="CurrentProjectEdit.opportunityInpState"
+                  class="custom-select Axis_IB" id="EditProjectnpState">
+                  <option *ngFor="let service of UtilityData.ProjectInpStatus; index as i; " [value]="i">
+                    {{service}}
+                  </option>
+                </select>
+              </div>
+              <!-- <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;max-width: 99%;">Owner ?</h5>
+              <div class="form-row col-md-12">
+                <div class="form-group col-md-12 Axis_IB">
+                  <label for="userReponsible">User Reponsible</label>
+                  <select type="text" name="OwnerId" [(ngModel)]="CurrentProjectEdit.ownerId"
+                    class="custom-select Axis_IB" id="userReponsible">
+                    <option *ngFor="let user of users" [value]="user.Id">
+                    {{user.Name}}
+                  </option>
+                    <option value="6">Rana Adigowni</option>
+                  </select>
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <label for="taginformation">Tag Information</label>
+              <input type="text" name="TagList" [(ngModel)]="CurrentProjectEdit.tagList" class="form-control"
+                id="taginformation" placeholder="Intrested In Demo">
+            </div>
+          </div>
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12 Axis_IB">
+              <h5 class="col-md-12 d-block p-2 bg-primary text-white" style="height: 35px;">Permissions</h5>
+              <label for="GroupType">Visbility</label>
+              <select type="text" name="Visiblity" [(ngModel)]="CurrentProjectEdit.visiblity"
+                class="custom-select Axis_IB" id="GroupType">
+                <option *ngFor="let service of UtilityData.VisibilityList; index as i; " [value]="i">
+                  {{service}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="closeModal" class="btn btn-primary" (click)="AddEditOpportunityLead()">Save
+          </button>
+      </div>
+    </div>
+  </div>
+</div>

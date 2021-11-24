@@ -1,0 +1,44 @@
+rounded{ 
+    border-top: 8px solid #bbb;
+    border-radius: 5px; 
+}
+Axis_IB{
+    size: 5rem;
+    display: flex;
+}
+
+modal-dialog {
+    max-width: 90%;
+}
+
+form{
+    font-size: small;
+    size: 5rem;
+
+}
+
+@media (min-width: 1200px){
+    .modal-xl {
+        max-width: 90%;
+    }
+}
+
+@media (min-width: 992px){
+     .modal-xl {
+        max-width: 90%;
+    }
+
+}
+@media (min-width: 576px){
+    .modal-dialog {
+        max-width: 90%;
+    }
+
+}
+
+td,th{
+    padding: 1%;
+    margin: 1%;
+    height: 10%;
+
+}

@@ -1,0 +1,14 @@
+html,
+body {
+
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+body {
+  padding: 20px 0;
+  background-image: url("../../assets/401UnA.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+}
